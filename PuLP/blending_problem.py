@@ -23,7 +23,7 @@ Requirements:
     Fibre ≤ 2.0
     Salt ≤ 0.4
 """
-from pulp import *
+import pulp as lp
 
 ingredients = ['Chicken', 'Beef', 'Mutton', 'Rice', 'Wheat', 'Gel']
 
@@ -72,27 +72,28 @@ salt = {
     'Gel': 0.000
 }
 
-prob = LpProblem("Blending", LpMinimize) #creates the problem
+#create the problem
+prob = lp.LpProblem("Blending", lp.LpMinimize) 
 
-#creates dict of Lp vars, instead of one by one
-ingredient_vars = LpVariable.dicts('ingr', ingredients, 0, None, LpContinuous)
+#create dict of Lp vars, instead of one by one
+ingredient_vars = lp.LpVariable.dicts('ingr', ingredients, 0, None, lp.LpContinuous)
 
 #add objective function: lowest cost
-prob += lpSum(cost[i] * ingredient_vars[i] for i in ingredients), 'Total cost of ingredients per can'
+prob += lp.lpSum(cost[i] * ingredient_vars[i] for i in ingredients), 'Total cost of ingredients per can'
 
 #add constraints
-prob += lpSum(ingredient_vars[i] for i in ingredients) == 100, 'Total ingredients = 100g',
-prob += lpSum(protein[i] * ingredient_vars[i] for i in ingredients) >= 8, 'Protein >= 8g'
-prob += lpSum(fat[i] * ingredient_vars[i] for i in ingredients) >= 6, 'Fat >= 6g'
-prob += lpSum(fibre[i] * ingredient_vars[i] for i in ingredients) <= 2, 'Fibre <= 2g'
-prob += lpSum(salt[i] * ingredient_vars[i] for i in ingredients) <= 0.4, 'Salt <= 0.4g'
+prob += lp.lpSum(ingredient_vars[i] for i in ingredients) == 100, 'Total ingredients = 100g',
+prob += lp.lpSum(protein[i] * ingredient_vars[i] for i in ingredients) >= 8, 'Protein >= 8g'
+prob += lp.lpSum(fat[i] * ingredient_vars[i] for i in ingredients) >= 6, 'Fat >= 6g'
+prob += lp.lpSum(fibre[i] * ingredient_vars[i] for i in ingredients) <= 2, 'Fibre <= 2g'
+prob += lp.lpSum(salt[i] * ingredient_vars[i] for i in ingredients) <= 0.4, 'Salt <= 0.4g'
 
 #solve by running the model
 prob.writeLP('blending_problem.lp')
 prob.solve()
 
 #print results
-print('Status =', LpStatus[prob.status])
+print('Status =', lp.LpStatus[prob.status])
 for var in prob.variables():
     print(var.name, '=', var.varValue)
-print('Total cost per can =', value(prob.objective))
+print('Total cost per can =', lp.value(prob.objective))
