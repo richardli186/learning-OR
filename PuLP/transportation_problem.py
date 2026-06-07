@@ -49,7 +49,6 @@ routes = [(w, b) for w in warehouses for b in bars]
 
 #create Lp variables. passing mult lists creates nested dict
 vars_dict = lp.LpVariable.dicts('Route', (warehouses, bars), 0, None, lp.LpInteger)
-print(list(vars_dict.keys())[:3])
 
 #add objective function: minimize total transportation cost
 prob += lp.lpSum(vars_dict[w][b] * costs_dict[w][b] for (w, b) in routes), 'Total transportation cost'
