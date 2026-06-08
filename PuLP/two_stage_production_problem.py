@@ -83,4 +83,4 @@ prob.solve()
 print('Status =', lp.LpStatus[prob.status])
 for var in prob.variables():
     print(var.name, '=', lp.value(var))
-print('Steel to buy =', lp.value(prob.objective))
+print('Total profit =', lp.value(prob.objective))
